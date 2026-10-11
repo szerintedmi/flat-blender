@@ -3,8 +3,7 @@
 
 # one folder per scan; back up the raw captures (data/*/raw) and the hand-made scene/overrides.json and
 # scene/views.json, the rest is rebuildable
-data/*
-!data/.gitkeep
+/data
 
 # python
 __pycache__/
