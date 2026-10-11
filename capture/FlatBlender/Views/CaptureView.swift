@@ -679,4 +679,16 @@ struct ARViewContainer: UIViewRepresentable {
         if view.debugOptions != options { view.debugOptions = options }
         coverage?.setVisible(showCoverage)
     }
+
+    func makeCoordinator() -> Coordinator { Coordinator(coverage: coverage) }
+
+    /// Takes the coverage dots out of the scene before the view (and its scene) goes.
+    static func dismantleUIView(_ view: ARView, coordinator: Coordinator) {
+        coordinator.coverage?.detach()
+    }
+
+    final class Coordinator {
+        let coverage: CoverageOverlay?
+        init(coverage: CoverageOverlay?) { self.coverage = coverage }
+    }
 }
