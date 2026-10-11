@@ -37,7 +37,8 @@ final class CoverageOverlay {
         self.map = map
     }
 
-    /// Adds the overlay to `view` (once) and starts the refresh loop. The loop ends when the view goes away.
+    /// Adds the overlay to `view` (once) and starts the refresh loop. Call `detach()` before the view is released:
+    /// RealityKit entities freed after their scene is gone crash in CoreRE.
     func attach(to view: ARView) {
         guard arView !== view else { return }
         arView = view
@@ -57,6 +58,19 @@ final class CoverageOverlay {
                 try? await Task.sleep(for: Self.refresh)
             }
         }
+    }
+
+    /// Stops the refresh loop and takes the dots out of the scene while the view is still alive (`attach` can
+    /// add them again later).
+    func detach() {
+        task?.cancel()
+        task = nil
+        anchor?.removeFromParent()
+        anchor = nil
+        entity = nil
+        mesh = nil
+        arView = nil
+        miniMap = nil
     }
 
     /// Shows or hides the dots (accumulation continues either way). Scene-understanding occlusion is on only
