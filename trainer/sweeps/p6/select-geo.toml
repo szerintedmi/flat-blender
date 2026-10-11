@@ -1,0 +1,12 @@
+# P6 a1+a2: final-default-geo's settings on the new dataset (frames picked by sharpness and camera movement,
+# 1,864 instead of 1,396; blurry stills dropped; stills' brightness matched to the video).
+name = "p6-select-geo"
+steps = 30000
+max_side = 960
+[args]
+depth-loss = true
+depth-lambda = 0.2
+normal-loss = true
+flatten-lambda = 1.0
+scale-ratio-lambda = 0.1
+antialiased = true

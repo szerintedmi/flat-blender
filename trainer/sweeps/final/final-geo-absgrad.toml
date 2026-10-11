@@ -1,0 +1,14 @@
+# final-default-geo (best so far: interp 22.76 / SSIM 0.819, depth AbsRel 0.033) lost fine detail with only
+# 1.2M splats: gsplat's default densification barely grows on this scene. AbsGS gradients (absgrad, grow
+# threshold 0.0008) densify where plain gradients cancel out.
+name = "final-geo-absgrad"
+steps = 30000
+max_side = 960
+[args]
+absgrad = true
+depth-loss = true
+depth-lambda = 0.2
+normal-loss = true
+flatten-lambda = 1.0
+scale-ratio-lambda = 0.1
+antialiased = true

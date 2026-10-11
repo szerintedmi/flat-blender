@@ -1,0 +1,9 @@
+# Does the geometry regularisation cost crispness? final-default-geo matches msplat on PSNR/SSIM with 4×
+# better depth but LPIPS 0.425 vs 0.383. Same run with LiDAR depth only: no normals, flattening, scale-ratio
+# or antialiasing.
+name = "final-depth-only"
+steps = 30000
+max_side = 960
+[args]
+depth-loss = true
+depth-lambda = 0.2

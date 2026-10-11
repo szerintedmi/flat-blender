@@ -1,0 +1,9 @@
+# Settings for `scanmodel` and `gs-trainer`. Command-line options win over these.
+project = "third"     # scan folder under data/ (--project)
+pose_graph = true     # correct ARKit drift with a keyframe pose graph (--no-pose-graph)
+poses = "refine"      # poses after `poses`: refine or posegraph (--poses)
+
+# [tools]             # tool paths, if not the defaults
+# blender = "/Applications/Blender.app/Contents/MacOS/Blender"
+# brush = "/Applications/brush_app"
+# msplat = "msplat-train"   # on PATH

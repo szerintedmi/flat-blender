@@ -1,0 +1,30 @@
+{
+  "format": "scan-model",
+  "version": 1,
+  "walls": [
+    {"id": "w.a", "start": [0.0, 0.0], "end": [4.0, 0.0], "thickness": 0.2, "height": 2.5, "source": {"kind": "roomplan"}},
+    {"id": "w.b", "start": [4.0, 0.0], "end": [6.0, 2.0], "thickness": 0.2, "height": 2.5, "source": {"kind": "roomplan"}},
+    {"id": "w.c", "start": [0.0, 0.0], "end": [0.0, 3.0], "thickness": 0.3, "height": 2.5, "source": {"kind": "override"}}
+  ],
+  "openings": [
+    {"id": "o.overlap-door", "kind": "door", "wall": "w.a", "offset": 1.0, "width": 1.0, "bottom": 0.0, "height": 2.1, "source": {"kind": "roomplan"}},
+    {"id": "o.overlap-window", "kind": "window", "wall": "w.a", "offset": 1.6, "width": 1.0, "bottom": 0.8, "height": 1.0, "source": {"kind": "roomplan"}},
+    {"id": "o.past-end", "kind": "window", "wall": "w.a", "offset": 3.9, "width": 0.6, "bottom": 1.0, "height": 2.0, "source": {"kind": "roomplan"}},
+    {"id": "o.outside", "kind": "opening", "wall": "w.a", "offset": 6.0, "width": 0.8, "bottom": 0.0, "height": 2.0, "source": {"kind": "roomplan"}},
+    {"id": "o.arch", "kind": "opening", "wall": "w.b", "offset": 1.4, "width": 0.9, "bottom": 0.0, "height": 2.2, "source": {"kind": "roomplan"}},
+    {"id": "o.orphan", "kind": "door", "wall": "w.missing", "offset": 1.0, "width": 0.9, "bottom": 0.0, "height": 2.0, "source": {"kind": "roomplan"}}
+  ],
+  "objects": [
+    {"id": "obj.plant", "category": "plant", "center": [2.0, 1.5, 0.5], "size": [0.4, 0.4, 1.0], "yaw_deg": 30.0, "source": {"kind": "override"}}
+  ],
+  "stairs": [
+    {"id": "st.fitted", "center": [1.0, 2.0, 0.5], "size": [0.8, 1.25, 1.0], "yaw_deg": -90.0,
+     "tread_z": [0.2, 0.4, 0.6, 0.8, 1.0], "source": {"kind": "plane_fit"}}
+  ],
+  "views": [
+    {"id": "view.matrix", "camera_to_world": [[1, 0, 0, 2], [0, 0, -1, -3], [0, 1, 0, 1.5], [0, 0, 0, 1]], "fov_deg": 60.0},
+    {"id": "view.down", "position": [2.0, 1.0, 6.0], "look_at": [2.0, 1.0, 0.0]},
+    {"id": "view.from-still", "still": "s01/000001"},
+    {"id": "view.no-pose"}
+  ]
+}

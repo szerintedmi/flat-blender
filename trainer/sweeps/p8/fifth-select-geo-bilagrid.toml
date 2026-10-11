@@ -1,0 +1,17 @@
+# Scan 5 (`fifth`, app 0.4.0): the default pipeline's dataset (refined poses and priors, --deband auto: living
+# debanded), with living frames 9474 / 9510, still s56 and 2 LiDAR pruning views trimmed (a ~60 cm ARKit pose
+# excursion, frames 9466-9527). The current recipe plus scan 4's `--color bilagrid` (one exposure lock for every room,
+# an outdoor garden session). L40S pinned: the GPU fallback under-reports cost.
+#   just gs sweep trainer/sweeps/p8/fifth-select-geo-bilagrid.toml --project fifth
+name = "s5-select-geo-bilagrid"
+steps = 30000
+max_side = 960
+gpu = "L40S:1"
+[args]
+depth-loss = true
+depth-lambda = 0.2
+normal-loss = true
+flatten-lambda = 1.0
+scale-ratio-lambda = 0.1
+antialiased = true
+color = "bilagrid"

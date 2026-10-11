@@ -1,0 +1,15 @@
+# Scan 4 (living room only, 1/240 s, LED flicker debanded by `scanmodel splat --deband`): p6-select-geo's settings
+# plus a per-image bilateral grid for what the debanding leaves. Dataset: scan 4's default (pose graph poses
+# then; now `scanmodel splat --project fourth --poses posegraph --dataset NAME` for the same):
+#   just gs sweep trainer/sweeps/p6/fourth-select-geo-bilagrid.toml --project fourth
+name = "s4-select-geo-bilagrid"
+steps = 30000
+max_side = 960
+[args]
+depth-loss = true
+depth-lambda = 0.2
+normal-loss = true
+flatten-lambda = 1.0
+scale-ratio-lambda = 0.1
+antialiased = true
+color = "bilagrid"

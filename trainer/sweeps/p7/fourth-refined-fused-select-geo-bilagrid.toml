@@ -1,0 +1,15 @@
+# Scan 4, priors fused from refined poses (`scanmodel fuse --poses refine`, then `scanmodel splat --project fourth --poses refine --fuse refine
+# --dataset refined-fused`): same images, split and poses as `refined`, only points.ply / mesh.ply
+# differ. Exactly p6/fourth-refined-select-geo-bilagrid.toml's settings: an A/B of the priors alone.
+#   just gs sweep trainer/sweeps/p7/fourth-refined-fused-select-geo-bilagrid.toml --data data/fourth/splat/datasets/refined-fused
+name = "s4-refined-fused-select-geo-bilagrid"
+steps = 30000
+max_side = 960
+[args]
+depth-loss = true
+depth-lambda = 0.2
+normal-loss = true
+flatten-lambda = 1.0
+scale-ratio-lambda = 0.1
+antialiased = true
+color = "bilagrid"

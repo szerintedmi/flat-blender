@@ -1,0 +1,18 @@
+# Scan 3: refined-fused-select-geo.toml (refined poses, priors fused from refined poses) plus the trainer's pose
+# optimisation (per-image 9-D correction). lr 3e-5 (default 1e-5: ~0.3 mm corrections in the 7k-step r1 runs, a
+# no-op; 3e-5 reaches ~1 px / a few mm, the scale of the residual after `scanmodel refine`). gpu "L40S:1" pins L40S
+# (no fallback to H100, which costs 2x).
+#   just gs sweep trainer/sweeps/p7/refined-fused-select-geo-poseopt.toml --data data/third/splat/datasets/refined-fused
+name = "s3-refined-fused-select-geo-poseopt"
+steps = 30000
+max_side = 960
+gpu = "L40S:1"
+[args]
+depth-loss = true
+depth-lambda = 0.2
+normal-loss = true
+flatten-lambda = 1.0
+scale-ratio-lambda = 0.1
+antialiased = true
+pose-opt = true
+pose-opt-lr = 3e-5

@@ -1,0 +1,12 @@
+# Safe final: the default strategy (stable; r2-base-30k reached msplat's level) + LiDAR depth + normals vs
+# the mesh + flattening + scale-ratio cap + antialiased, 30k steps at 960 px. Fallback if MCMC misbehaves.
+name = "final-default-geo"
+steps = 30000
+max_side = 960
+[args]
+depth-loss = true
+depth-lambda = 0.2
+normal-loss = true
+flatten-lambda = 1.0
+scale-ratio-lambda = 0.1
+antialiased = true

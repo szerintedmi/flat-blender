@@ -1,0 +1,16 @@
+# The overnight final (MCMC noise scaled to the metric world, see train.py): MCMC (3M budget) + LiDAR depth (EdgeAwareLogL1) + normals vs the mesh + flattening +
+# scale-ratio cap + antialiased, 30k steps at 960 px. Round 1 (7k): depth+normals cut depth AbsRel 0.18 ->
+# 0.055 with a small photometric gain; pose opt, bilateral grid and the fused DA3 target gave nothing
+# measurable. Round 2: the 7k screen was too short (opacity resets); 30k default = msplat-level.
+name = "final-mcmc-geo"
+steps = 30000
+max_side = 960
+[args]
+strategy = "mcmc"
+cap-max = 3000000
+depth-loss = true
+depth-lambda = 0.2
+normal-loss = true
+flatten-lambda = 1.0
+scale-ratio-lambda = 0.1
+antialiased = true

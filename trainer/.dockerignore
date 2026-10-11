@@ -1,0 +1,5 @@
+# The image is built from pyproject.toml and uv.lock only (the Dockerfile COPYs nothing else); this keeps
+# the build context small if a COPY is ever added.
+*
+!pyproject.toml
+!uv.lock

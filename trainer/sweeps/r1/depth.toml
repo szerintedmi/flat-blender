@@ -1,0 +1,8 @@
+# + LiDAR depth (EdgeAwareLogL1, λ 0.2), confidence ≥1 until 3k then 2 only (schedule shortened for 7k).
+name = "r1-depth"
+steps = 7000
+max_side = 960
+[args]
+depth-loss = true
+depth-lambda = 0.2
+depth-conf-until = 3000

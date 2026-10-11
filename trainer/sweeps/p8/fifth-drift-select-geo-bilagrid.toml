@@ -1,0 +1,16 @@
+# Scan 5 (`fifth`, app 0.4.0) after the fixes: ingest drops the living excursion (frames 9464-9528, still 56), refine's
+# coarse round takes out the lap's 48 cm drift (its re-solved test poses now move <= 1.9 cm), structure's thin-wall
+# fix. The default dataset, no hand trimming. Same settings as fifth-select-geo-bilagrid.toml: an A/B of the poses.
+#   just gs sweep trainer/sweeps/p8/fifth-drift-select-geo-bilagrid.toml --project fifth
+name = "s5-drift-select-geo-bilagrid"
+steps = 30000
+max_side = 960
+gpu = "L40S:1"
+[args]
+depth-loss = true
+depth-lambda = 0.2
+normal-loss = true
+flatten-lambda = 1.0
+scale-ratio-lambda = 0.1
+antialiased = true
+color = "bilagrid"

@@ -1,0 +1,12 @@
+// Signing for the FlatBlender target. Personal values go in Local.xcconfig next to this file
+// (gitignored), so project.pbxproj stays shareable:
+//
+//   DEVELOPMENT_TEAM = ABCDE12345
+//   BUNDLE_ID_SUFFIX = .yourname
+//
+// Set the team there, not in Xcode's Signing & Capabilities tab: that tab writes it into
+// project.pbxproj, where it overrides this file.
+DEVELOPMENT_TEAM =
+BUNDLE_ID_SUFFIX =
+
+#include? "Local.xcconfig"

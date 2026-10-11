@@ -1,0 +1,17 @@
+# P6 a3: p6-select-geo's settings + losses that put splats on the surface: depth variance along each ray
+# (a 3DGS stand-in for 2DGS's distortion loss) and opacity entropy (splats solid or gone), plus free-space
+# pruning until 27k with 2 votes. Watch dvar= / ent= in the log (aim: dvar term ~0.005–0.01 of the total).
+name = "p6-surface"
+steps = 30000
+max_side = 960
+[args]
+depth-loss = true
+depth-lambda = 0.2
+normal-loss = true
+flatten-lambda = 1.0
+scale-ratio-lambda = 0.1
+antialiased = true
+depth-var-lambda = 0.5
+opacity-entropy-lambda = 0.01
+prune-until = 27000
+min-free = 2

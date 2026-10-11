@@ -1,0 +1,996 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "AnchorEvent": {
+      "additionalProperties": false,
+      "description": "One line of `anchors.jsonl`: an ARAnchor we added (at each still and every 1 s) and ARKit's later\nupdates to it, so ARKit's own loop-closure corrections can be read back.",
+      "properties": {
+        "t": {
+          "title": "T",
+          "type": "number"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "event": {
+          "enum": [
+            "add",
+            "update",
+            "final"
+          ],
+          "title": "Event",
+          "type": "string"
+        },
+        "transform": {
+          "$ref": "#/$defs/Mat4"
+        }
+      },
+      "required": [
+        "t",
+        "id",
+        "name",
+        "event",
+        "transform"
+      ],
+      "title": "AnchorEvent",
+      "type": "object"
+    },
+    "Calibration": {
+      "additionalProperties": false,
+      "description": "`calibration.json`, from AVCameraCalibrationData of the wide camera.",
+      "properties": {
+        "reference_width": {
+          "title": "Reference Width",
+          "type": "integer"
+        },
+        "reference_height": {
+          "title": "Reference Height",
+          "type": "integer"
+        },
+        "intrinsic_matrix": {
+          "items": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "title": "Intrinsic Matrix",
+          "type": "array"
+        },
+        "lens_distortion_center": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Lens Distortion Center",
+          "type": "array"
+        },
+        "lens_distortion_lookup_table": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Lens Distortion Lookup Table",
+          "type": "array"
+        },
+        "inverse_lens_distortion_lookup_table": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Inverse Lens Distortion Lookup Table",
+          "type": "array"
+        },
+        "pixel_size_mm": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pixel Size Mm"
+        }
+      },
+      "required": [
+        "reference_width",
+        "reference_height",
+        "intrinsic_matrix",
+        "lens_distortion_center",
+        "lens_distortion_lookup_table",
+        "inverse_lens_distortion_lookup_table"
+      ],
+      "title": "Calibration",
+      "type": "object"
+    },
+    "DepthFormat": {
+      "additionalProperties": false,
+      "properties": {
+        "width": {
+          "default": 256,
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "default": 192,
+          "title": "Height",
+          "type": "integer"
+        },
+        "unit": {
+          "const": "mm",
+          "default": "mm",
+          "title": "Unit",
+          "type": "string"
+        },
+        "smoothed": {
+          "default": false,
+          "title": "Smoothed",
+          "type": "boolean"
+        }
+      },
+      "title": "DepthFormat",
+      "type": "object"
+    },
+    "Device": {
+      "properties": {
+        "model": {
+          "title": "Model",
+          "type": "string"
+        },
+        "os_version": {
+          "title": "Os Version",
+          "type": "string"
+        },
+        "app_name": {
+          "default": "FlatBlender",
+          "title": "App Name",
+          "type": "string"
+        },
+        "app_version": {
+          "title": "App Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model",
+        "os_version",
+        "app_version"
+      ],
+      "title": "Device",
+      "type": "object"
+    },
+    "Exposure": {
+      "additionalProperties": false,
+      "properties": {
+        "duration_s": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration S"
+        },
+        "offset_ev": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Offset Ev"
+        },
+        "iso": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Iso"
+        }
+      },
+      "title": "Exposure",
+      "type": "object"
+    },
+    "Frame": {
+      "additionalProperties": false,
+      "description": "One line of `frames.jsonl`. `idx` is the frame's index in video.mov.",
+      "properties": {
+        "idx": {
+          "minimum": 0,
+          "title": "Idx",
+          "type": "integer"
+        },
+        "t": {
+          "title": "T",
+          "type": "number"
+        },
+        "camera_to_world": {
+          "$ref": "#/$defs/Mat4"
+        },
+        "intrinsics": {
+          "$ref": "#/$defs/Intrinsics"
+        },
+        "tracking": {
+          "$ref": "#/$defs/TrackingState"
+        },
+        "exposure": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Exposure"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "depth": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Depth"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        }
+      },
+      "required": [
+        "idx",
+        "t",
+        "camera_to_world",
+        "intrinsics",
+        "tracking"
+      ],
+      "title": "Frame",
+      "type": "object"
+    },
+    "Intrinsics": {
+      "additionalProperties": false,
+      "properties": {
+        "fx": {
+          "title": "Fx",
+          "type": "number"
+        },
+        "fy": {
+          "title": "Fy",
+          "type": "number"
+        },
+        "cx": {
+          "title": "Cx",
+          "type": "number"
+        },
+        "cy": {
+          "title": "Cy",
+          "type": "number"
+        },
+        "width": {
+          "exclusiveMinimum": 0,
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "exclusiveMinimum": 0,
+          "title": "Height",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "fx",
+        "fy",
+        "cx",
+        "cy",
+        "width",
+        "height"
+      ],
+      "title": "Intrinsics",
+      "type": "object"
+    },
+    "LockedCamera": {
+      "additionalProperties": false,
+      "description": "Camera settings locked after metering, so colour and brightness match across frames.",
+      "properties": {
+        "locked": {
+          "title": "Locked",
+          "type": "boolean"
+        },
+        "exposure_duration_s": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exposure Duration S"
+        },
+        "iso": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Iso"
+        },
+        "lens_position": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lens Position"
+        },
+        "white_balance": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WhiteBalanceGains"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "metered": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Exposure"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "underexposure_ev": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Underexposure Ev"
+        },
+        "shutter_mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "sharp",
+                "flicker_50hz",
+                "flicker_60hz"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shutter Mode"
+        },
+        "flicker_suspected": {
+          "anyOf": [
+            {
+              "enum": [
+                "50hz",
+                "60hz"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Flicker Suspected"
+        },
+        "flicker_prompt": {
+          "anyOf": [
+            {
+              "enum": [
+                "shown",
+                "accepted",
+                "declined"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Flicker Prompt"
+        }
+      },
+      "required": [
+        "locked"
+      ],
+      "title": "LockedCamera",
+      "type": "object"
+    },
+    "Mat4": {
+      "items": {
+        "$ref": "#/$defs/Row4"
+      },
+      "maxItems": 4,
+      "minItems": 4,
+      "type": "array"
+    },
+    "Row4": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 4,
+      "minItems": 4,
+      "type": "array"
+    },
+    "Session": {
+      "description": "`session.json`.",
+      "properties": {
+        "format": {
+          "const": "flat-bundle",
+          "default": "flat-bundle",
+          "title": "Format",
+          "type": "string"
+        },
+        "version": {
+          "const": 1,
+          "default": 1,
+          "title": "Version",
+          "type": "integer"
+        },
+        "project_id": {
+          "title": "Project Id",
+          "type": "string"
+        },
+        "session_id": {
+          "title": "Session Id",
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/$defs/SessionType"
+        },
+        "device": {
+          "$ref": "#/$defs/Device"
+        },
+        "video": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VideoFormat"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "depth": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DepthFormat"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "camera": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LockedCamera"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "world_map_in": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "World Map In"
+        },
+        "world_map_out": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "World Map Out"
+        },
+        "continued_from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Continued From"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "ended_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ended At"
+        },
+        "room_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Room Name"
+        },
+        "importer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Importer"
+        },
+        "sweeps": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Sweep"
+          },
+          "title": "Sweeps",
+          "type": "array"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "session_id",
+        "type",
+        "device",
+        "started_at"
+      ],
+      "title": "Session",
+      "type": "object"
+    },
+    "SessionType": {
+      "enum": [
+        "scan",
+        "lap",
+        "texture",
+        "ultrawide"
+      ],
+      "title": "SessionType",
+      "type": "string"
+    },
+    "Still": {
+      "additionalProperties": false,
+      "description": "One line of `stills.jsonl`.",
+      "properties": {
+        "id": {
+          "minimum": 0,
+          "title": "Id",
+          "type": "integer"
+        },
+        "file": {
+          "title": "File",
+          "type": "string"
+        },
+        "t": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "T"
+        },
+        "source": {
+          "$ref": "#/$defs/StillSource"
+        },
+        "intrinsics": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Intrinsics"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "camera_to_world": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Mat4"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "tracking": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TrackingState"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "exposure": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Exposure"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "white_balance": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WhiteBalanceGains"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "sharpness": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sharpness"
+        },
+        "nearest_frame": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nearest Frame"
+        },
+        "gravity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Vec3"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "motion": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/StillMotion"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "flagged_blurry": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Flagged Blurry"
+        }
+      },
+      "required": [
+        "id",
+        "file",
+        "source"
+      ],
+      "title": "Still",
+      "type": "object"
+    },
+    "StillMotion": {
+      "additionalProperties": false,
+      "description": "How the camera moved when a still was taken (app 0.3+): blur predicted from the motion.",
+      "properties": {
+        "angular_speed_deg_s": {
+          "title": "Angular Speed Deg S",
+          "type": "number"
+        },
+        "speed_m_s": {
+          "title": "Speed M S",
+          "type": "number"
+        },
+        "blur_px": {
+          "title": "Blur Px",
+          "type": "number"
+        },
+        "frame_sharpness": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Frame Sharpness"
+        },
+        "median_sharpness": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Median Sharpness"
+        }
+      },
+      "required": [
+        "angular_speed_deg_s",
+        "speed_m_s",
+        "blur_px"
+      ],
+      "title": "StillMotion",
+      "type": "object"
+    },
+    "StillSource": {
+      "enum": [
+        "tap",
+        "auto",
+        "texture",
+        "ultrawide",
+        "video"
+      ],
+      "title": "StillSource",
+      "type": "string"
+    },
+    "Sweep": {
+      "additionalProperties": false,
+      "description": "A guided doorway sweep: both faces of the wall around a door within a few seconds.",
+      "properties": {
+        "t0": {
+          "title": "T0",
+          "type": "number"
+        },
+        "t1": {
+          "title": "T1",
+          "type": "number"
+        }
+      },
+      "required": [
+        "t0",
+        "t1"
+      ],
+      "title": "Sweep",
+      "type": "object"
+    },
+    "TrackingState": {
+      "enum": [
+        "normal",
+        "limited_initializing",
+        "limited_excessive_motion",
+        "limited_insufficient_features",
+        "limited_relocalizing",
+        "not_available"
+      ],
+      "title": "TrackingState",
+      "type": "string"
+    },
+    "Vec3": {
+      "maxItems": 3,
+      "minItems": 3,
+      "prefixItems": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ],
+      "type": "array"
+    },
+    "VideoFormat": {
+      "additionalProperties": false,
+      "properties": {
+        "width": {
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "title": "Height",
+          "type": "integer"
+        },
+        "fps": {
+          "title": "Fps",
+          "type": "number"
+        },
+        "codec": {
+          "default": "hevc",
+          "enum": [
+            "hevc",
+            "h264"
+          ],
+          "title": "Codec",
+          "type": "string"
+        }
+      },
+      "required": [
+        "width",
+        "height",
+        "fps"
+      ],
+      "title": "VideoFormat",
+      "type": "object"
+    },
+    "WhiteBalanceGains": {
+      "additionalProperties": false,
+      "properties": {
+        "red": {
+          "title": "Red",
+          "type": "number"
+        },
+        "green": {
+          "title": "Green",
+          "type": "number"
+        },
+        "blue": {
+          "title": "Blue",
+          "type": "number"
+        }
+      },
+      "required": [
+        "red",
+        "green",
+        "blue"
+      ],
+      "title": "WhiteBalanceGains",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Capture bundle v1. Each property is one file (the .jsonl files: the schema of one line).",
+  "properties": {
+    "session_json": {
+      "$ref": "#/$defs/Session"
+    },
+    "frames_jsonl_line": {
+      "$ref": "#/$defs/Frame"
+    },
+    "stills_jsonl_line": {
+      "$ref": "#/$defs/Still"
+    },
+    "anchors_jsonl_line": {
+      "$ref": "#/$defs/AnchorEvent"
+    },
+    "calibration_json": {
+      "$ref": "#/$defs/Calibration"
+    }
+  },
+  "required": [
+    "session_json",
+    "frames_jsonl_line",
+    "stills_jsonl_line",
+    "anchors_jsonl_line",
+    "calibration_json"
+  ],
+  "title": "flat-bundle v1",
+  "type": "object"
+}

@@ -1,0 +1,5 @@
+# Round 1 (7k steps, 960 px): plain gsplat + LiDAR free-space pruning, the P1 baseline.
+name = "r1-base"
+steps = 7000
+max_side = 960
+args = []

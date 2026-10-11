@@ -1,0 +1,16 @@
+# P3 + the fused LiDAR/DA3 depth target with 1/σ weighting (P4, the thesis' idea adapted).
+name = "r1-fused"
+steps = 7000
+max_side = 960
+[args]
+depth-loss = true
+depth-lambda = 0.2
+depth-target = "fused"
+depth-weighting = "sigma"
+normal-loss = true
+normal-start = 3000
+flatten-lambda = 1.0
+scale-ratio-lambda = 0.1
+antialiased = true
+pose-opt = true
+color = "bilagrid"

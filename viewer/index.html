@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scan viewer</title>
+    <style>
+      html, body { margin: 0; height: 100%; overflow: hidden; background: #111; }
+      canvas { display: block; }
+      #hud {
+        position: fixed; left: 8px; top: 8px; max-width: calc(100vw - 32px);
+        padding: 6px 8px; border-radius: 4px; background: rgba(0, 0, 0, 0.55);
+        color: #ddd; font: 12px/1.45 ui-monospace, Menlo, monospace; pointer-events: none;
+      }
+      #hud .err { color: #ff8a80; }
+      #panel {
+        position: fixed; right: 8px; top: 8px; width: 290px; max-width: calc(100vw - 32px);
+        padding: 6px 8px; border-radius: 4px; background: rgba(0, 0, 0, 0.7);
+        color: #ddd; font: 12px/1.45 ui-monospace, Menlo, monospace;
+      }
+      #panel .head { display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
+      #panel .head button {
+        background: none; border: 1px solid #555; color: #ddd; border-radius: 3px; cursor: pointer;
+        font: inherit; padding: 0 6px;
+      }
+      #panel.collapsed .body { display: none; }
+      #panel .body > * { margin-top: 6px; }
+      #panel select { width: 100%; font: inherit; background: #222; color: #eee; border: 1px solid #555; }
+      #panel table { border-collapse: collapse; width: 100%; }
+      #panel td { padding: 0 6px 0 0; vertical-align: top; }
+      #panel td:first-child { color: #999; white-space: nowrap; }
+      #panel label { display: flex; gap: 6px; align-items: center; }
+      #panel input[type="range"] { flex: 1; }
+      #panel .dim, #panel .keys { color: #888; }
+      #panel .warn { color: #ffd180; }
+      #panel .err { color: #ff8a80; }
+      #model-section, #view-section { border-top: 1px solid #444; padding-top: 6px; }
+      #view-section button {
+        background: #222; border: 1px solid #555; color: #ddd; border-radius: 3px; cursor: pointer;
+        font: inherit; padding: 1px 8px;
+      }
+      #toast {
+        position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); padding: 6px 12px;
+        border-radius: 4px; background: rgba(0, 0, 0, 0.8); color: #eee; font: 13px ui-monospace, Menlo, monospace;
+        opacity: 0; transition: opacity 0.2s; pointer-events: none;
+      }
+      #toast.show { opacity: 1; }
+    </style>
+  </head>
+  <body>
+    <div id="hud">
+      <div id="status">loading…</div>
+      <div id="pose"></div>
+      <div>click: mouse look (Esc: release) · ↑↓: walk · ←→: turn · shift+↑↓: up/down · shift+←→: strafe · WASD/QE · wheel: step · G: grid · F: overview · C: copy view URL (shift+C: walkable)</div>
+    </div>
+    <div id="panel">
+      <div class="head"><span>Layers</span><button id="panel-toggle" title="P">–</button></div>
+      <div class="body">
+        <div id="scan-row" hidden>
+          <label for="scan-select">Scan</label>
+          <select id="scan-select" title="each scan has its own splats, model and named views (?scan=)"></select>
+        </div>
+        <div id="view-row" hidden>
+          <label for="view-select">Named view</label>
+          <select id="view-select" title="the scan's named views, scene/views.json (?view=)"></select>
+        </div>
+        <div>
+          <label for="splat-select">Splat</label>
+          <select id="splat-select"></select>
+        </div>
+        <div id="splat-info"></div>
+        <div id="model-section">
+          <label><input type="checkbox" id="model-on" /> Blender model (M)</label>
+          <label>opacity <input type="range" id="model-opacity" min="0.1" max="1" step="0.05" value="1" /><span id="model-opacity-value">100%</span></label>
+          <label><input type="checkbox" id="model-wire" /> wireframe (X)</label>
+        </div>
+        <div id="view-section">
+          <button id="copy-view" title="C: exact ?pose= (opens frozen) · shift+C or shift+click: walkable ?cam=&amp;look=">Copy view (C)</button>
+        </div>
+        <div class="keys">1–9: splat · 0: no splat · M: model · X: wireframe · P: panel</div>
+      </div>
+    </div>
+    <div id="toast"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

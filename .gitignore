@@ -1,0 +1,33 @@
+# secrets / local paths
+.env
+
+# one folder per scan; back up the raw captures (data/*/raw) and the hand-made scene/overrides.json and
+# scene/views.json, the rest is rebuildable
+data/*
+!data/.gitkeep
+
+# python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# node
+node_modules/
+viewer/dist/
+viewer/public/data/
+
+# xcode
+capture/**/xcuserdata/
+capture/build/
+*.xcresult
+DerivedData/
+
+# blender
+*.blend1
+
+.DS_Store
+
+# personal Xcode signing (see capture/Signing.xcconfig)
+capture/Local.xcconfig

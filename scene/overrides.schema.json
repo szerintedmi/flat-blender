@@ -1,0 +1,817 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "Additions": {
+      "additionalProperties": false,
+      "properties": {
+        "levels": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Level"
+          },
+          "title": "Levels",
+          "type": "array"
+        },
+        "rooms": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Room"
+          },
+          "title": "Rooms",
+          "type": "array"
+        },
+        "walls": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Wall"
+          },
+          "title": "Walls",
+          "type": "array"
+        },
+        "openings": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Opening"
+          },
+          "title": "Openings",
+          "type": "array"
+        },
+        "objects": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Object"
+          },
+          "title": "Objects",
+          "type": "array"
+        },
+        "stairs": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Stair"
+          },
+          "title": "Stairs",
+          "type": "array"
+        }
+      },
+      "title": "Additions",
+      "type": "object"
+    },
+    "CameraPath": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "points": {
+          "items": {
+            "$ref": "#/$defs/Vec2"
+          },
+          "minItems": 2,
+          "title": "Points",
+          "type": "array"
+        },
+        "eye_height": {
+          "default": 1.6,
+          "title": "Eye Height",
+          "type": "number"
+        },
+        "speed": {
+          "default": 1.0,
+          "title": "Speed",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "points"
+      ],
+      "title": "CameraPath",
+      "type": "object"
+    },
+    "Fit": {
+      "additionalProperties": false,
+      "properties": {
+        "inliers": {
+          "title": "Inliers",
+          "type": "integer"
+        },
+        "rms_m": {
+          "title": "Rms M",
+          "type": "number"
+        },
+        "shift_m": {
+          "default": 0.0,
+          "title": "Shift M",
+          "type": "number"
+        },
+        "rotation_deg": {
+          "default": 0.0,
+          "title": "Rotation Deg",
+          "type": "number"
+        }
+      },
+      "required": [
+        "inliers",
+        "rms_m"
+      ],
+      "title": "Fit",
+      "type": "object"
+    },
+    "FrameChoice": {
+      "additionalProperties": false,
+      "description": "How `scanmodel poses` fixes the scene frame. Defaults: see scanmodel.stages.poses.",
+      "properties": {
+        "origin_door": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Origin Door"
+        },
+        "yaw_offset_deg": {
+          "default": 0.0,
+          "title": "Yaw Offset Deg",
+          "type": "number"
+        },
+        "floor_z": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Floor Z"
+        }
+      },
+      "title": "FrameChoice",
+      "type": "object"
+    },
+    "Level": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "elevation": {
+          "default": 0.0,
+          "title": "Elevation",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "title": "Level",
+      "type": "object"
+    },
+    "Mat4": {
+      "items": {
+        "$ref": "#/$defs/Row4"
+      },
+      "maxItems": 4,
+      "minItems": 4,
+      "type": "array"
+    },
+    "Object": {
+      "additionalProperties": false,
+      "description": "Furniture or fitting as an oriented box: `size` is along its local x/y/z, then rotated by `yaw_deg`.",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "category": {
+          "title": "Category",
+          "type": "string"
+        },
+        "center": {
+          "$ref": "#/$defs/Vec3"
+        },
+        "size": {
+          "$ref": "#/$defs/Vec3"
+        },
+        "yaw_deg": {
+          "default": 0.0,
+          "title": "Yaw Deg",
+          "type": "number"
+        },
+        "representation": {
+          "$ref": "#/$defs/Representation",
+          "default": "box"
+        },
+        "room": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Room"
+        },
+        "source": {
+          "$ref": "#/$defs/Source"
+        }
+      },
+      "required": [
+        "id",
+        "category",
+        "center",
+        "size",
+        "source"
+      ],
+      "title": "Object",
+      "type": "object"
+    },
+    "Opening": {
+      "additionalProperties": false,
+      "description": "A hole in a wall. Positions are along the wall's centreline from its start.",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/OpeningKind"
+        },
+        "wall": {
+          "title": "Wall",
+          "type": "string"
+        },
+        "offset": {
+          "title": "Offset",
+          "type": "number"
+        },
+        "width": {
+          "exclusiveMinimum": 0,
+          "title": "Width",
+          "type": "number"
+        },
+        "bottom": {
+          "minimum": 0,
+          "title": "Bottom",
+          "type": "number"
+        },
+        "height": {
+          "exclusiveMinimum": 0,
+          "title": "Height",
+          "type": "number"
+        },
+        "is_open": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Open"
+        },
+        "source": {
+          "$ref": "#/$defs/Source"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "wall",
+        "offset",
+        "width",
+        "bottom",
+        "height",
+        "source"
+      ],
+      "title": "Opening",
+      "type": "object"
+    },
+    "OpeningKind": {
+      "enum": [
+        "door",
+        "window",
+        "opening"
+      ],
+      "title": "OpeningKind",
+      "type": "string"
+    },
+    "Representation": {
+      "enum": [
+        "parametric",
+        "splat",
+        "tsdf_crop",
+        "box"
+      ],
+      "title": "Representation",
+      "type": "string"
+    },
+    "Room": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "level": {
+          "default": "ground",
+          "title": "Level",
+          "type": "string"
+        },
+        "session": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Session"
+        },
+        "polygon": {
+          "items": {
+            "$ref": "#/$defs/Vec2"
+          },
+          "minItems": 3,
+          "title": "Polygon",
+          "type": "array"
+        },
+        "floor_z": {
+          "default": 0.0,
+          "title": "Floor Z",
+          "type": "number"
+        },
+        "ceiling_z": {
+          "title": "Ceiling Z",
+          "type": "number"
+        },
+        "ceiling_plane": {
+          "anyOf": [
+            {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ceiling Plane"
+        },
+        "source": {
+          "$ref": "#/$defs/Source"
+        }
+      },
+      "required": [
+        "id",
+        "polygon",
+        "ceiling_z",
+        "source"
+      ],
+      "title": "Room",
+      "type": "object"
+    },
+    "Row4": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 4,
+      "minItems": 4,
+      "type": "array"
+    },
+    "Source": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/SourceKind"
+        },
+        "sessions": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Sessions",
+          "type": "array"
+        },
+        "roomplan_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Roomplan Ids",
+          "type": "array"
+        },
+        "fit": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Fit"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "Source",
+      "type": "object"
+    },
+    "SourceKind": {
+      "enum": [
+        "roomplan",
+        "plane_fit",
+        "merged",
+        "override",
+        "poc"
+      ],
+      "title": "SourceKind",
+      "type": "string"
+    },
+    "Stair": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "center": {
+          "$ref": "#/$defs/Vec3"
+        },
+        "size": {
+          "$ref": "#/$defs/Vec3"
+        },
+        "yaw_deg": {
+          "default": 0.0,
+          "title": "Yaw Deg",
+          "type": "number"
+        },
+        "tread_z": {
+          "default": [],
+          "items": {
+            "type": "number"
+          },
+          "title": "Tread Z",
+          "type": "array"
+        },
+        "source": {
+          "$ref": "#/$defs/Source"
+        }
+      },
+      "required": [
+        "id",
+        "center",
+        "size",
+        "source"
+      ],
+      "title": "Stair",
+      "type": "object"
+    },
+    "Vec2": {
+      "maxItems": 2,
+      "minItems": 2,
+      "prefixItems": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ],
+      "type": "array"
+    },
+    "Vec3": {
+      "maxItems": 3,
+      "minItems": 3,
+      "prefixItems": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ],
+      "type": "array"
+    },
+    "View": {
+      "additionalProperties": false,
+      "description": "A named camera, shared by Blender renders and the web viewer.",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "camera_to_world": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Mat4"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "position": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Vec3"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "look_at": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Vec3"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "fov_deg": {
+          "default": 70.0,
+          "title": "Fov Deg",
+          "type": "number"
+        },
+        "still": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Still"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "View",
+      "type": "object"
+    },
+    "Wall": {
+      "additionalProperties": false,
+      "description": "A straight wall as a centreline with a thickness. Faces are offset +-thickness/2 to each side.\n\nWalls meeting at a corner end at the intersection of their centrelines; a builder closes the\noutside corner by extending one of them by half the other's thickness.",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "level": {
+          "default": "ground",
+          "title": "Level",
+          "type": "string"
+        },
+        "start": {
+          "$ref": "#/$defs/Vec2"
+        },
+        "end": {
+          "$ref": "#/$defs/Vec2"
+        },
+        "thickness": {
+          "exclusiveMinimum": 0,
+          "title": "Thickness",
+          "type": "number"
+        },
+        "thickness_measured": {
+          "default": false,
+          "title": "Thickness Measured",
+          "type": "boolean"
+        },
+        "faces_observed": {
+          "default": [
+            true,
+            true
+          ],
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "boolean"
+            }
+          ],
+          "title": "Faces Observed",
+          "type": "array"
+        },
+        "base_z": {
+          "default": 0.0,
+          "title": "Base Z",
+          "type": "number"
+        },
+        "height": {
+          "exclusiveMinimum": 0,
+          "title": "Height",
+          "type": "number"
+        },
+        "height_end": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Height End"
+        },
+        "rooms": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Rooms",
+          "type": "array"
+        },
+        "source": {
+          "$ref": "#/$defs/Source"
+        }
+      },
+      "required": [
+        "id",
+        "start",
+        "end",
+        "thickness",
+        "height",
+        "source"
+      ],
+      "title": "Wall",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": 1,
+      "default": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "frame": {
+      "$ref": "#/$defs/FrameChoice",
+      "default": {
+        "origin_door": null,
+        "yaw_offset_deg": 0.0,
+        "floor_z": null
+      }
+    },
+    "room_names": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "default": {},
+      "title": "Room Names",
+      "type": "object"
+    },
+    "patch": {
+      "additionalProperties": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "default": {},
+      "title": "Patch",
+      "type": "object"
+    },
+    "remove": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Remove",
+      "type": "array"
+    },
+    "add": {
+      "$ref": "#/$defs/Additions",
+      "default": {
+        "levels": [],
+        "rooms": [],
+        "walls": [],
+        "openings": [],
+        "objects": [],
+        "stairs": []
+      }
+    },
+    "views": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/View"
+      },
+      "title": "Views",
+      "type": "array"
+    },
+    "paths": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/CameraPath"
+      },
+      "title": "Paths",
+      "type": "array"
+    },
+    "drop_frames": {
+      "additionalProperties": {
+        "items": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "type": "array"
+        },
+        "type": "array"
+      },
+      "default": {},
+      "title": "Drop Frames",
+      "type": "object"
+    }
+  },
+  "title": "scan-model overrides v1",
+  "type": "object"
+}

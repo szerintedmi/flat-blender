@@ -1,0 +1,5 @@
+# The baseline at full resolution (1920 px): what resolution alone gives (P0 suggested a lot).
+name = "r1-base-full"
+steps = 7000
+max_side = 1920
+args = []

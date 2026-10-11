@@ -1,0 +1,6 @@
+# The plain baseline with gsplat's full schedule (densify to 15k, opacity reset every 3k), 30k steps: is the
+# 7k screen just too short (r1-base: blurry, 1.0M splats, interp 19.7 vs msplat 22.5)?
+name = "r2-base-30k"
+steps = 30000
+max_side = 960
+args = []

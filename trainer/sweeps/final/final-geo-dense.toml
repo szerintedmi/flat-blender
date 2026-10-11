@@ -1,0 +1,14 @@
+# final-default-geo with a lower split/duplicate threshold. Neither the default (0.0002) nor absgrad (0.0008)
+# densifies here: the init is ~1M points 2 cm apart with ~1 cm splats, so the image gradient is spread thin
+# and few splats cross the threshold (count stays ~1M, fine detail is lost). 0.00008 = 2.5× lower.
+name = "final-geo-dense"
+steps = 30000
+max_side = 960
+[args]
+grow-grad2d = 0.00008
+depth-loss = true
+depth-lambda = 0.2
+normal-loss = true
+flatten-lambda = 1.0
+scale-ratio-lambda = 0.1
+antialiased = true

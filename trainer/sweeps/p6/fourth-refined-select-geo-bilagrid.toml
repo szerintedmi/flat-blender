@@ -1,0 +1,14 @@
+# Scan 4 with bundle-adjusted poses (`scanmodel refine`, then `scanmodel splat --project fourth --poses refine --dataset refined`):
+# exactly fourth-select-geo-bilagrid.toml's settings, only the dataset differs.
+#   just gs sweep trainer/sweeps/p6/fourth-refined-select-geo-bilagrid.toml --data data/fourth/splat/datasets/refined
+name = "s4-refined-select-geo-bilagrid"
+steps = 30000
+max_side = 960
+[args]
+depth-loss = true
+depth-lambda = 0.2
+normal-loss = true
+flatten-lambda = 1.0
+scale-ratio-lambda = 0.1
+antialiased = true
+color = "bilagrid"

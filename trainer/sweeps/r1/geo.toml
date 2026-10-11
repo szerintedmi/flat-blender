@@ -1,0 +1,13 @@
+# + normals vs mesh (from 3k), DN-Splatter flattening, scale-ratio cap, antialiased (P2 complete).
+name = "r1-geo"
+steps = 7000
+max_side = 960
+[args]
+depth-loss = true
+depth-lambda = 0.2
+depth-conf-until = 3000
+normal-loss = true
+normal-start = 3000
+flatten-lambda = 1.0
+scale-ratio-lambda = 0.1
+antialiased = true

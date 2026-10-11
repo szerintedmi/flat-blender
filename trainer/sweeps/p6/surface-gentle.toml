@@ -1,0 +1,20 @@
+# P6 a3, second try. p6-surface (dvar λ 0.5, entropy λ 0.01 from 7k, min-free 2) collapsed: dvar reached
+# ~half the loss and fought the depth loss (0.15 -> 0.86), and entropy overlapping the opacity resets cut
+# the splats 770k -> 265k between 9k and 12k (end: 187k, l1 0.11 vs ~0.07). Now: dvar ~5-10 % of the loss,
+# entropy only after densification ends (15k: no more resets), pruning votes back at 3.
+name = "p6-surface-gentle"
+steps = 30000
+max_side = 960
+[args]
+depth-loss = true
+depth-lambda = 0.2
+normal-loss = true
+flatten-lambda = 1.0
+scale-ratio-lambda = 0.1
+antialiased = true
+depth-var-lambda = 0.05
+depth-var-start = 3000
+opacity-entropy-lambda = 0.001
+opacity-entropy-start = 15000
+prune-until = 27000
+min-free = 3

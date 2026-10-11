@@ -1,0 +1,7 @@
+# MCMC densification (3DGS-MCMC: fixed budget, relocation, no opacity resets), 3M splats, 30k steps.
+name = "r2-mcmc-30k"
+steps = 30000
+max_side = 960
+[args]
+strategy = "mcmc"
+cap-max = 3000000

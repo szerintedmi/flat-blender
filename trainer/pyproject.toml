@@ -1,0 +1,69 @@
+[project]
+name = "gs-trainer"
+version = "0.1.0"
+description = "gsplat trainer for scan splats: LiDAR pruning, depth/normal supervision, pose and colour optimisation; runs on a CUDA GPU (Modal)"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "gsplat",
+    "lpips>=0.1.4",
+    "modal>=1.0",
+    "numpy>=2.1",
+    "open3d>=0.19",
+    "opencv-python-headless>=4.10",
+    "plyfile>=1.0",
+    "rich>=13",
+    "scipy>=1.13",
+    "torch==2.9.1",
+    "torchvision==0.24.1",
+    "typer>=0.15",
+]
+
+[project.scripts]
+gs-trainer = "gs_trainer.cli:app"
+
+[dependency-groups]
+dev = ["pyright>=1.1.400", "pytest>=8", "ruff>=0.12"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["gs_trainer"]
+
+[tool.uv]
+# gsplat is installed as pure Python (BUILD_NO_CUDA=1) everywhere; on the GPU image its CUDA kernels are
+# JIT-compiled once at image build time (see Dockerfile), which needs no GPU, only nvcc. Its setup.py
+# imports torch, hence the extra build dependency.
+extra-build-dependencies = { gsplat = ["torch==2.9.1"] }
+
+[tool.uv.extra-build-variables]
+gsplat = { BUILD_NO_CUDA = "1" }
+
+[tool.uv.sources]
+# Pinned main (version string 1.6.0, unreleased): see docs/plans/2026-10-08-gsplat-cloud.md, "Decisions".
+gsplat = { git = "https://github.com/nerfstudio-project/gsplat", rev = "512d366" }
+torch = [{ index = "pytorch-cu128", marker = "sys_platform == 'linux'" }]
+torchvision = [{ index = "pytorch-cu128", marker = "sys_platform == 'linux'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+ignore = ["E501"]
+
+[tool.pyright]
+pythonVersion = "3.12"
+typeCheckingMode = "standard"
+include = ["gs_trainer", "tests"]
+reportMissingTypeStubs = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
