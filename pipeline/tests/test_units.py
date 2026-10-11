@@ -131,6 +131,14 @@ def test_cli_all_then_cached_then_splat(repo: Path) -> None:
     assert "msplat  3 splats" in _cli(tmp_path, "status").stdout
 
 
+def test_splat_preset_is_checked_before_the_export(repo: Path) -> None:
+    _settings(repo)
+    r = _cli(repo, "splat", "--train", "--preset", "geo")  # msplat
+    assert r.returncode != 0 and "only gsplat has presets" in r.stdout + r.stderr
+    r = _cli(repo, "splat", "--train", "--trainer", "gsplat", "--preset", "ultra")
+    assert r.returncode != 0 and "pick one of base, geo" in r.stdout + r.stderr
+
+
 def test_committed_schemas_are_current(tmp_path: Path) -> None:
     """scene/schema.json etc. are generated from the models; regenerate with `scanmodel schema`."""
     from scanmodel.schema import write_schemas

@@ -76,6 +76,7 @@ just splat                  # the splat dataset (refined poses, the points + mes
 just cli meshcheck         # the fused mesh vs each frame's own LiDAR at its pose (--dataset D: its frames)
 just splat --train          # nerfstudio dataset + msplat splats, floaters pruned with the LiDAR
                             # (--trainer brush|gsplat, --name run, -n steps, --no-prune, --trainer-arg=--sh-degree=2)
+just splat --train --trainer gsplat --preset geo --name gsplat-geo   # gsplat with depth + normals: better, slower
 just cli view add kitchen-door "<viewer URL>" --note "…"   # a named view for splat comparisons
 just cli view add sofa --image <session>_002940   # …or at a captured frame/still's pose
 just export                 # viewer data: model.glb, every trained splat, named views into viewer/public/data/scans/<scan>/

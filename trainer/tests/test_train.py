@@ -2,6 +2,7 @@
 renderer (loss goes down, densification and pruning run, a preempted run resumes exactly where its
 checkpoint left off, the PLY round-trips)."""
 
+import dataclasses
 import json
 import math
 import re
@@ -38,6 +39,17 @@ def test_cli_is_generated_from_config(tmp_path: Path) -> None:
     help_text = train.build_parser().format_help()
     for flag in ("--depth-lambda", "--no-antialiased", "--resume", "--bilagrid-w", "--mcmc-scale-reg"):
         assert flag in help_text
+
+
+def test_preset_sets_defaults_and_flags_override(tmp_path: Path) -> None:
+    cfg = train.parse_config(
+        ["--data", "d", "--out", str(tmp_path), "--preset", "geo", "--depth-lambda", "0.5"]
+    )
+    assert (cfg.preset, cfg.depth_loss, cfg.normal_loss, cfg.antialiased) == ("geo", True, True, True)
+    assert (cfg.flatten_lambda, cfg.depth_lambda) == (1.0, 0.5)
+    cfg = train.parse_config(["--data", "d", "--out", str(tmp_path), "--preset=geo", "--no-antialiased"])
+    assert (cfg.depth_loss, cfg.antialiased) == (True, False)
+    assert set(train.PRESETS["geo"]) <= {f.name for f in dataclasses.fields(train.Config)}
 
 
 def test_config_json_paths_are_repo_relative(tmp_path: Path) -> None:
