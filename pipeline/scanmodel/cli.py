@@ -467,6 +467,13 @@ def splat_cmd(
             help="Session left out of training as the extrap test set: auto (the *-lap one), none, or an id."
         ),
     ] = "auto",
+    preset: Annotated[
+        str | None,
+        typer.Option(
+            help=f"gsplat: a bundle of trainer options ({', '.join(splat.GSPLAT_PRESETS)}; --trainer-arg wins)."
+            " geo: depth + normals + anti-needle, sharper geometry, slower."
+        ),
+    ] = None,
     trainer_args: Annotated[
         list[str] | None, typer.Option("--trainer-arg", help="Extra trainer argument (repeatable).")
     ] = None,
@@ -504,6 +511,10 @@ def splat_cmd(
         raise typer.BadParameter(f"pick one of {', '.join(splat.BLUR_REFS)}", param_hint="--blur-ref")
     if deband not in DEBAND_MODES:
         raise typer.BadParameter(f"pick one of {', '.join(DEBAND_MODES)}", param_hint="--deband")
+    if preset is not None and trainer != "gsplat":
+        raise typer.BadParameter("only gsplat has presets", param_hint="--preset")
+    if preset is not None and preset not in splat.GSPLAT_PRESETS:
+        raise typer.BadParameter(f"pick one of {', '.join(splat.GSPLAT_PRESETS)}", param_hint="--preset")
     dataset = dataset or "default"
     if not dataset or "/" in dataset or dataset.startswith(".") or dataset in splat.TRAINERS:
         raise typer.BadParameter("a plain folder name, not a trainer's", param_hint="--dataset")
@@ -572,7 +583,7 @@ def splat_cmd(
     if run in ("dataset", dataset, "exports") or "/" in run or run.startswith("."):
         raise typer.BadParameter("a plain folder name other than the dataset's", param_hint="--name")
     exe = {"msplat": cfg.msplat, "brush": cfg.brush, "gsplat": "uv"}[trainer]
-    extra = trainer_args or []
+    extra = ([f"--preset={preset}"] if preset else []) + (trainer_args or [])
     train_params = {
         "trainer": trainer,
         "iterations": iterations,

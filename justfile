@@ -41,7 +41,7 @@ ipad-list *args:
 ingest *args:
     {{ scanmodel }} ingest "$@"
 
-# splat dataset; --train trains msplat with LiDAR pruning (--trainer brush, -n steps, --no-prune)
+# splat dataset; --train trains msplat with LiDAR pruning (--trainer brush|gsplat, --preset geo, -n steps, --no-prune)
 splat *args:
     {{ scanmodel }} splat "$@"
 

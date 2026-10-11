@@ -60,6 +60,7 @@ from ..models.derived import PosedImage, Poses
 
 TRAINERS = ("msplat", "brush", "gsplat")
 DEFAULT_TRAINER = "msplat"
+GSPLAT_PRESETS = ("base", "geo")  # trainer/gs_trainer/train.py's PRESETS (`--preset`), defined there
 # msplat keeps every training image in memory as float32 RGB, twice on the CPU plus a GPU copy, so
 # 1482 images at 1920x1440 would need ~100 GB. Train at a downscale that keeps the sum of image pixels
 # under this (~3 GB per copy); on a 24 GB Mac that is 1/4 resolution for ~1500 images.

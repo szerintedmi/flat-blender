@@ -53,6 +53,20 @@ from gs_trainer.render import render
 
 SH_C0 = 0.28209479177387814
 DEPTH_TARGETS = ("lidar", *fusion.MODES)
+# Named bundles of Config values (`--preset`); flags given explicitly override them. base: the defaults below
+# (the P1 baseline, cheapest). geo: sweeps/final/default-geo.toml, the best final on salut2 (msplat's PSNR/SSIM
+# with ~4x better depth), slower: it renders depth and normals every step.
+PRESETS: dict[str, dict[str, Any]] = {
+    "base": {},
+    "geo": {
+        "depth_loss": True,
+        "depth_lambda": 0.2,
+        "normal_loss": True,
+        "flatten_lambda": 1.0,
+        "scale_ratio_lambda": 0.1,
+        "antialiased": True,
+    },
+}
 
 
 def opt(default: Any, help: str, choices: tuple[str, ...] | None = None) -> Any:
@@ -65,6 +79,9 @@ class Config:
     data: Path = field(metadata={"help": "dataset v2 directory (transforms.json, split.json, ...)"})
     out: Path = field(metadata={"help": "run directory: train.log, progress.json, ckpts/, splat.ply, ..."})
     # Run
+    preset: str = opt(
+        "base", "a named bundle of the options below (PRESETS); explicit flags win", tuple(PRESETS)
+    )
     steps: int = opt(30_000, "training steps")
     max_side: int = opt(960, "training images' longest side in pixels (never enlarged)")
     seed: int = opt(0, "random seed")
@@ -189,7 +206,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def parse_config(argv: list[str] | None = None) -> Config:
-    return Config(**vars(build_parser().parse_args(argv)))
+    """The Config from the command line: the preset's values as defaults, then the flags given."""
+    p = build_parser()
+    p.set_defaults(**PRESETS[p.parse_args(argv).preset])
+    return Config(**vars(p.parse_args(argv)))
 
 
 def config_dict(cfg: Config) -> dict[str, Any]:
