@@ -29,6 +29,14 @@ model *args:
 all *args:
     {{ scanmodel }} all "$@"
 
+# copy scans off the USB-connected iPad into data/<project>/raw/ (new/changed/incomplete sessions) and crash reports into logs/ipad/ (--list, -n, --force, projects...)
+ipad-pull *args:
+    python3 scripts/ipad_pull.py "$@"
+
+# what is on the iPad, with sizes and status: new / downloaded / changed / incomplete (same as `just ipad-pull --list`)
+ipad-list *args:
+    python3 scripts/ipad_pull.py --list "$@"
+
 # check bundles in data/<project>/raw (--project NAME, --raw <dir>, --skip <session>)
 ingest *args:
     {{ scanmodel }} ingest "$@"

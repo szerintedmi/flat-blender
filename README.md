@@ -47,8 +47,10 @@ just open plan --project fifth   # blend, plan, report, glb or data
 It runs ingest → poses → refine → fuse → structure → eval → build (the stages of `just all`; only what
 changed), prints each stage's time and where the model, plan render and eval report are.
 
-Bundles go in `data/<project>/raw/<session>/`. Select a scan with `--project NAME` on a command, or
-the default (`project` in `settings.toml`). No per-scan config file is required; the project folder sets
+Bundles go in `data/<project>/raw/<session>/`; `just ipad-pull` copies every project off the USB-connected
+iPad there (only new, changed or incomplete sessions, each recorded in its `.pull.json`; the app's crash
+reports go to `data/<project>/logs/ipad/`; `just ipad-list` shows what is where).
+Select a scan with `--project NAME` on a command, or the default (`project` in `settings.toml`). No per-scan config file is required; the project folder sets
 every default path. `--raw` and `--skip` explicitly select inputs; effective options are recorded in
 generated manifests.
 Ingest removes the output of sessions it no longer reads, so later stages only see selected sessions.
